@@ -15,6 +15,7 @@ import rave.dataset
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('name', None, help='Name of the run', required=True)
+flags.DEFINE_string('save_model_to', default='run', help='Where to save model')
 flags.DEFINE_multi_string('config',
                           default='v2.gin',
                           help='RAVE configuration to use')
@@ -105,7 +106,7 @@ def main(argv):
 
     RUN_NAME = f'{FLAGS.name}_{gin_hash}'
 
-    os.makedirs(os.path.join("runs", RUN_NAME), exist_ok=True)
+    os.makedirs(os.path.join(FLAGS.save_model_to, RUN_NAME), exist_ok=True)
 
     if FLAGS.gpu == [-1]:
         gpu = 0
@@ -131,7 +132,7 @@ def main(argv):
 
     trainer = pl.Trainer(
         logger=pl.loggers.TensorBoardLogger(
-            "runs",
+            FLAGS.save_model_to,
             name=RUN_NAME,
         ),
         accelerator=accelerator,
